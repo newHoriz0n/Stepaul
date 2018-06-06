@@ -10,13 +10,15 @@ import game.Spieler;
 
 import javax.swing.JPanel;
 
-public class AntView extends JPanel
-{
+public class AntView extends JPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private boolean initFinished;
+
 	private AntsExe ae;
 
 	private int feldGroesse;
@@ -37,12 +39,9 @@ public class AntView extends JPanel
 
 	private Font infoFont;
 
-	public AntView(final AntsExe ae)
-	{
+	public AntView(final AntsExe ae) {
 
 		ladeFarben();
-
-		this.setSize(1400, 800);
 
 		this.ae = ae;
 
@@ -56,45 +55,38 @@ public class AntView extends JPanel
 
 		this.speedCtrlPosition = offY + feldGroesse + (ae.getWelt().getWeltArray().length - 2) * feldGroesse;
 
-		addMouseListener(new MouseListener()
-		{
+		addMouseListener(new MouseListener() {
 
 			@Override
-			public void mouseReleased(MouseEvent e)
-			{
+			public void mouseReleased(MouseEvent e) {
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e)
-			{
+			public void mousePressed(MouseEvent e) {
 			}
 
 			@Override
-			public void mouseExited(MouseEvent e)
-			{
+			public void mouseExited(MouseEvent e) {
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent e)
-			{
+			public void mouseEntered(MouseEvent e) {
 			}
 
 			@Override
-			public void mouseClicked(MouseEvent arg0)
-			{
+			public void mouseClicked(MouseEvent arg0) {
 				checkSetSpeedCtrl(arg0);
 			}
 
-			private void checkSetSpeedCtrl(MouseEvent arg0)
-			{
+			private void checkSetSpeedCtrl(MouseEvent arg0) {
 				if (arg0.getX() > offX + 5 + (ae.getWelt().getWeltArray()[0].length + 1) * feldGroesse
 						&& arg0.getX() < offX + 5 + (ae.getWelt().getWeltArray()[0].length + 2) * feldGroesse
 						&& arg0.getY() > offY + feldGroesse
 						&& arg0.getY() < offY + feldGroesse + (ae.getWelt().getWeltArray().length - 2) * feldGroesse) {
 
 					speedCtrlPosition = arg0.getY();
-					ae.setUpdateRate(1.0 - ((double) (arg0.getY() - (offY + feldGroesse)) / (double) ((ae.getWelt()
-							.getWeltArray().length - 2) * feldGroesse)));
+					ae.setUpdateRate(1.0 - ((double) (arg0.getY() - (offY + feldGroesse))
+							/ (double) ((ae.getWelt().getWeltArray().length - 2) * feldGroesse)));
 
 				}
 			}
@@ -105,8 +97,7 @@ public class AntView extends JPanel
 	/**
 	 * Laed die Spielfarben
 	 */
-	private void ladeFarben()
-	{
+	private void ladeFarben() {
 		this.wand = new Color(50, 50, 50);
 		this.frei = new Color(240, 240, 240);
 		this.spielerFarben = new Color[] { new Color(204, 51, 51), new Color(0, 102, 204), new Color(255, 204, 51),
@@ -117,12 +108,16 @@ public class AntView extends JPanel
 		this.speedCtrlSlider = Color.LIGHT_GRAY;
 	}
 
-	public void paint(Graphics g)
-	{
-
-		// drawSpielerSicht(g);
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, 1600, 800);
+	public void paint(Graphics g) {
+		
+		if (getHeight() > 0) {
+			// drawSpielerSicht(g);
+			g.setColor(Color.BLACK);
+			g.fillRect(0, 0, getWidth(), getHeight());
+			initFinished = true;
+			System.out.println(getWidth());
+			System.out.println("Init Finished");
+		}
 
 		drawWelt(g);
 
@@ -137,8 +132,7 @@ public class AntView extends JPanel
 		drawSpielerMarker(g);
 	}
 
-	private void drawSpielerMarker(Graphics g)
-	{
+	private void drawSpielerMarker(Graphics g) {
 
 		for (Spieler s : ae.getSpielerListe()) {
 			if (s.getMarker() != null) {
@@ -151,8 +145,7 @@ public class AntView extends JPanel
 
 	}
 
-	private void drawSpielerSicht(Graphics g)
-	{
+	private void drawSpielerSicht(Graphics g) {
 
 		for (int i = 0; i < ae.getSpielerInfos().get(0).getSichtbareWelt().length; i++) {
 			for (int j = 0; j < ae.getSpielerInfos().get(0).getSichtbareWelt()[0].length; j++) {
@@ -195,8 +188,7 @@ public class AntView extends JPanel
 
 	}
 
-	private void drawTestSicht(Graphics g)
-	{
+	private void drawTestSicht(Graphics g) {
 
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, 1400, 800);
@@ -257,24 +249,22 @@ public class AntView extends JPanel
 
 	}
 
-	private void drawSpeedControl(Graphics g)
-	{
+	private void drawSpeedControl(Graphics g) {
 
 		g.setColor(speedCtrlBar);
 
 		g.fillRect(offX + 5 + (ae.getWelt().getWeltArray()[0].length + 1) * feldGroesse, offY + feldGroesse,
 				feldGroesse - 10, (ae.getWelt().getWeltArray().length - 2) * feldGroesse);
 		g.setColor(Color.WHITE);
-		g.drawLine(offX + 5 + (ae.getWelt().getWeltArray()[0].length + 1) * feldGroesse, speedCtrlPosition, offX + 5
-				+ (ae.getWelt().getWeltArray()[0].length + 2) * feldGroesse, speedCtrlPosition);
+		g.drawLine(offX + 5 + (ae.getWelt().getWeltArray()[0].length + 1) * feldGroesse, speedCtrlPosition,
+				offX + 5 + (ae.getWelt().getWeltArray()[0].length + 2) * feldGroesse, speedCtrlPosition);
 		g.setFont(speedCtrlFont);
-		g.drawString("" + (int) (1000 / ae.getUpdateRate()) + " FPS", offX + 5
-				+ (ae.getWelt().getWeltArray()[0].length + 2) * feldGroesse + 10, speedCtrlPosition);
+		g.drawString("" + (int) (1000 / ae.getUpdateRate()) + " FPS",
+				offX + 5 + (ae.getWelt().getWeltArray()[0].length + 2) * feldGroesse + 10, speedCtrlPosition);
 
 	}
 
-	private void drawSpielerInfo(Graphics g)
-	{
+	private void drawSpielerInfo(Graphics g) {
 
 		g.setFont(infoFont);
 
@@ -284,22 +274,25 @@ public class AntView extends JPanel
 
 		if (ae.getSpielerInfos().size() > 1) {
 			g.setColor(spielerFarben[1]);
-			g.drawString("" + ae.getSpielerInfos().get(1).getOriginalAmeisen().size() + " | "
-					+ ae.getSpielerInfos().get(1).getNahrungsVorrat(), offX + 5 + feldGroesse
-					* (ae.getWelt().getWeltArray()[0].length - 4), offY + 21 + feldGroesse
-					* (ae.getWelt().getWeltArray().length - 1));
+			g.drawString(
+					"" + ae.getSpielerInfos().get(1).getOriginalAmeisen().size() + " | "
+							+ ae.getSpielerInfos().get(1).getNahrungsVorrat(),
+					offX + 5 + feldGroesse * (ae.getWelt().getWeltArray()[0].length - 4),
+					offY + 21 + feldGroesse * (ae.getWelt().getWeltArray().length - 1));
 
 			if (ae.getSpielerInfos().size() > 2) {
 				g.setColor(spielerFarben[2]);
-				g.drawString("" + ae.getSpielerInfos().get(2).getOriginalAmeisen().size() + " | "
-						+ ae.getSpielerInfos().get(2).getNahrungsVorrat(), offX + 5 + feldGroesse, offY + 21 + feldGroesse
-						* (ae.getWelt().getWeltArray().length - 1));
+				g.drawString(
+						"" + ae.getSpielerInfos().get(2).getOriginalAmeisen().size() + " | "
+								+ ae.getSpielerInfos().get(2).getNahrungsVorrat(),
+						offX + 5 + feldGroesse, offY + 21 + feldGroesse * (ae.getWelt().getWeltArray().length - 1));
 
 				if (ae.getSpielerInfos().size() > 3) {
 					g.setColor(spielerFarben[3]);
-					g.drawString("" + ae.getSpielerInfos().get(3).getOriginalAmeisen().size() + " | "
-							+ ae.getSpielerInfos().get(3).getNahrungsVorrat(), offX + 5 + feldGroesse
-							* (ae.getWelt().getWeltArray()[0].length - 4), offY + 21);
+					g.drawString(
+							"" + ae.getSpielerInfos().get(3).getOriginalAmeisen().size() + " | "
+									+ ae.getSpielerInfos().get(3).getNahrungsVorrat(),
+							offX + 5 + feldGroesse * (ae.getWelt().getWeltArray()[0].length - 4), offY + 21);
 				}
 
 			}
@@ -312,20 +305,19 @@ public class AntView extends JPanel
 	 * 
 	 * @param g
 	 */
-	private void drawSpieler(Graphics g)
-	{
+	private void drawSpieler(Graphics g) {
 
 		for (int i = 0; i < ae.getSpielerInfos().size(); i++) {
 			g.setColor(spielerFarben[i]);
 			for (int j = 0; j < ae.getSpielerInfos().get(i).getOriginalAmeisen().size(); j++) {
-				g.fillRect(offX + 5 + ae.getSpielerInfos().get(i).getOriginalAmeisen().get(j).getX() * feldGroesse, offY
-						+ 5 + ae.getSpielerInfos().get(i).getOriginalAmeisen().get(j).getY() * feldGroesse, 20, 20);
+				g.fillRect(offX + 5 + ae.getSpielerInfos().get(i).getOriginalAmeisen().get(j).getX() * feldGroesse,
+						offY + 5 + ae.getSpielerInfos().get(i).getOriginalAmeisen().get(j).getY() * feldGroesse, 20,
+						20);
 			}
 		}
 	}
 
-	private void drawNahrung(Graphics g)
-	{
+	private void drawNahrung(Graphics g) {
 
 		for (int i = 0; i < ae.getWelt().getWeltArray().length; i++) {
 			for (int j = 0; j < ae.getWelt().getWeltArray()[0].length; j++) {
@@ -338,8 +330,7 @@ public class AntView extends JPanel
 
 	}
 
-	private void drawWelt(Graphics g)
-	{
+	private void drawWelt(Graphics g) {
 		for (int i = 0; i < ae.getWelt().getWeltArray().length; i++) {
 			for (int j = 0; j < ae.getWelt().getWeltArray()[0].length; j++) {
 
@@ -352,25 +343,25 @@ public class AntView extends JPanel
 					g.fillRect(offX + j * feldGroesse, offY + i * feldGroesse, feldGroesse, feldGroesse);
 				}
 				if (ae.getWelt().getWeltArray()[i][j] == 2) {
-					g.setColor(new Color((int) (spielerFarben[0].getRed() * 0.5), (int) (spielerFarben[0].getGreen() * 0.5),
-							(int) (spielerFarben[0].getBlue() * 0.5)));
+					g.setColor(new Color((int) (spielerFarben[0].getRed() * 0.5),
+							(int) (spielerFarben[0].getGreen() * 0.5), (int) (spielerFarben[0].getBlue() * 0.5)));
 					g.fillRect(offX + j * feldGroesse, offY + i * feldGroesse, feldGroesse, feldGroesse);
 				}
 				if (ae.getWelt().getWeltArray()[i][j] == 3) {
-					g.setColor(new Color((int) (spielerFarben[1].getRed() * 0.5), (int) (spielerFarben[1].getGreen() * 0.5),
-							(int) (spielerFarben[1].getBlue() * 0.5)));
+					g.setColor(new Color((int) (spielerFarben[1].getRed() * 0.5),
+							(int) (spielerFarben[1].getGreen() * 0.5), (int) (spielerFarben[1].getBlue() * 0.5)));
 
 					g.fillRect(offX + j * feldGroesse, offY + i * feldGroesse, feldGroesse, feldGroesse);
 				}
 				if (ae.getWelt().getWeltArray()[i][j] == 4) {
-					g.setColor(new Color((int) (spielerFarben[2].getRed() * 0.5), (int) (spielerFarben[2].getGreen() * 0.5),
-							(int) (spielerFarben[2].getBlue() * 0.5)));
+					g.setColor(new Color((int) (spielerFarben[2].getRed() * 0.5),
+							(int) (spielerFarben[2].getGreen() * 0.5), (int) (spielerFarben[2].getBlue() * 0.5)));
 
 					g.fillRect(offX + j * feldGroesse, offY + i * feldGroesse, feldGroesse, feldGroesse);
 				}
 				if (ae.getWelt().getWeltArray()[i][j] == 5) {
-					g.setColor(new Color((int) (spielerFarben[3].getRed() * 0.5), (int) (spielerFarben[3].getGreen() * 0.5),
-							(int) (spielerFarben[3].getBlue() * 0.5)));
+					g.setColor(new Color((int) (spielerFarben[3].getRed() * 0.5),
+							(int) (spielerFarben[3].getGreen() * 0.5), (int) (spielerFarben[3].getBlue() * 0.5)));
 
 					g.fillRect(offX + j * feldGroesse, offY + i * feldGroesse, feldGroesse, feldGroesse);
 				}
